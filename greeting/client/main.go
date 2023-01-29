@@ -20,5 +20,6 @@ func main() {
 	defer coon.Close()
 
 	c := pb.NewGreetingServiceClient(coon)
-	doGreeting(c)
+	//doGreeting(c)
+	doGreetingManyTime(c)
 }
