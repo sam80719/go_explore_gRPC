@@ -26,6 +26,8 @@ type GreetingServiceClient interface {
 	Greeting(ctx context.Context, in *GreetingRequest, opts ...grpc.CallOption) (*GreetingResponse, error)
 	// server stream
 	GreetingManyTime(ctx context.Context, in *GreetingRequest, opts ...grpc.CallOption) (GreetingService_GreetingManyTimeClient, error)
+	// client stream
+	LongGreeting(ctx context.Context, opts ...grpc.CallOption) (GreetingService_LongGreetingClient, error)
 }
 
 type greetingServiceClient struct {
@@ -77,6 +79,40 @@ func (x *greetingServiceGreetingManyTimeClient) Recv() (*GreetingResponse, error
 	return m, nil
 }
 
+func (c *greetingServiceClient) LongGreeting(ctx context.Context, opts ...grpc.CallOption) (GreetingService_LongGreetingClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetingService_ServiceDesc.Streams[1], "/greeting.GreetingService/LongGreeting", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greetingServiceLongGreetingClient{stream}
+	return x, nil
+}
+
+type GreetingService_LongGreetingClient interface {
+	Send(*GreetingRequest) error
+	CloseAndRecv() (*GreetingResponse, error)
+	grpc.ClientStream
+}
+
+type greetingServiceLongGreetingClient struct {
+	grpc.ClientStream
+}
+
+func (x *greetingServiceLongGreetingClient) Send(m *GreetingRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *greetingServiceLongGreetingClient) CloseAndRecv() (*GreetingResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(GreetingResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreetingServiceServer is the server API for GreetingService service.
 // All implementations must embed UnimplementedGreetingServiceServer
 // for forward compatibility
@@ -85,6 +121,8 @@ type GreetingServiceServer interface {
 	Greeting(context.Context, *GreetingRequest) (*GreetingResponse, error)
 	// server stream
 	GreetingManyTime(*GreetingRequest, GreetingService_GreetingManyTimeServer) error
+	// client stream
+	LongGreeting(GreetingService_LongGreetingServer) error
 	mustEmbedUnimplementedGreetingServiceServer()
 }
 
@@ -97,6 +135,9 @@ func (UnimplementedGreetingServiceServer) Greeting(context.Context, *GreetingReq
 }
 func (UnimplementedGreetingServiceServer) GreetingManyTime(*GreetingRequest, GreetingService_GreetingManyTimeServer) error {
 	return status.Errorf(codes.Unimplemented, "method GreetingManyTime not implemented")
+}
+func (UnimplementedGreetingServiceServer) LongGreeting(GreetingService_LongGreetingServer) error {
+	return status.Errorf(codes.Unimplemented, "method LongGreeting not implemented")
 }
 func (UnimplementedGreetingServiceServer) mustEmbedUnimplementedGreetingServiceServer() {}
 
@@ -150,6 +191,32 @@ func (x *greetingServiceGreetingManyTimeServer) Send(m *GreetingResponse) error 
 	return x.ServerStream.SendMsg(m)
 }
 
+func _GreetingService_LongGreeting_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GreetingServiceServer).LongGreeting(&greetingServiceLongGreetingServer{stream})
+}
+
+type GreetingService_LongGreetingServer interface {
+	SendAndClose(*GreetingResponse) error
+	Recv() (*GreetingRequest, error)
+	grpc.ServerStream
+}
+
+type greetingServiceLongGreetingServer struct {
+	grpc.ServerStream
+}
+
+func (x *greetingServiceLongGreetingServer) SendAndClose(m *GreetingResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *greetingServiceLongGreetingServer) Recv() (*GreetingRequest, error) {
+	m := new(GreetingRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreetingService_ServiceDesc is the grpc.ServiceDesc for GreetingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -167,6 +234,11 @@ var GreetingService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "GreetingManyTime",
 			Handler:       _GreetingService_GreetingManyTime_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "LongGreeting",
+			Handler:       _GreetingService_LongGreeting_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "greeting.proto",
