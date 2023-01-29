@@ -28,6 +28,8 @@ type GreetingServiceClient interface {
 	GreetingManyTime(ctx context.Context, in *GreetingRequest, opts ...grpc.CallOption) (GreetingService_GreetingManyTimeClient, error)
 	// client stream
 	LongGreeting(ctx context.Context, opts ...grpc.CallOption) (GreetingService_LongGreetingClient, error)
+	// Streaming Bi-directional
+	GreetingEveryone(ctx context.Context, opts ...grpc.CallOption) (GreetingService_GreetingEveryoneClient, error)
 }
 
 type greetingServiceClient struct {
@@ -113,6 +115,37 @@ func (x *greetingServiceLongGreetingClient) CloseAndRecv() (*GreetingResponse, e
 	return m, nil
 }
 
+func (c *greetingServiceClient) GreetingEveryone(ctx context.Context, opts ...grpc.CallOption) (GreetingService_GreetingEveryoneClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetingService_ServiceDesc.Streams[2], "/greeting.GreetingService/GreetingEveryone", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greetingServiceGreetingEveryoneClient{stream}
+	return x, nil
+}
+
+type GreetingService_GreetingEveryoneClient interface {
+	Send(*GreetingRequest) error
+	Recv() (*GreetingResponse, error)
+	grpc.ClientStream
+}
+
+type greetingServiceGreetingEveryoneClient struct {
+	grpc.ClientStream
+}
+
+func (x *greetingServiceGreetingEveryoneClient) Send(m *GreetingRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *greetingServiceGreetingEveryoneClient) Recv() (*GreetingResponse, error) {
+	m := new(GreetingResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreetingServiceServer is the server API for GreetingService service.
 // All implementations must embed UnimplementedGreetingServiceServer
 // for forward compatibility
@@ -123,6 +156,8 @@ type GreetingServiceServer interface {
 	GreetingManyTime(*GreetingRequest, GreetingService_GreetingManyTimeServer) error
 	// client stream
 	LongGreeting(GreetingService_LongGreetingServer) error
+	// Streaming Bi-directional
+	GreetingEveryone(GreetingService_GreetingEveryoneServer) error
 	mustEmbedUnimplementedGreetingServiceServer()
 }
 
@@ -138,6 +173,9 @@ func (UnimplementedGreetingServiceServer) GreetingManyTime(*GreetingRequest, Gre
 }
 func (UnimplementedGreetingServiceServer) LongGreeting(GreetingService_LongGreetingServer) error {
 	return status.Errorf(codes.Unimplemented, "method LongGreeting not implemented")
+}
+func (UnimplementedGreetingServiceServer) GreetingEveryone(GreetingService_GreetingEveryoneServer) error {
+	return status.Errorf(codes.Unimplemented, "method GreetingEveryone not implemented")
 }
 func (UnimplementedGreetingServiceServer) mustEmbedUnimplementedGreetingServiceServer() {}
 
@@ -217,6 +255,32 @@ func (x *greetingServiceLongGreetingServer) Recv() (*GreetingRequest, error) {
 	return m, nil
 }
 
+func _GreetingService_GreetingEveryone_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GreetingServiceServer).GreetingEveryone(&greetingServiceGreetingEveryoneServer{stream})
+}
+
+type GreetingService_GreetingEveryoneServer interface {
+	Send(*GreetingResponse) error
+	Recv() (*GreetingRequest, error)
+	grpc.ServerStream
+}
+
+type greetingServiceGreetingEveryoneServer struct {
+	grpc.ServerStream
+}
+
+func (x *greetingServiceGreetingEveryoneServer) Send(m *GreetingResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *greetingServiceGreetingEveryoneServer) Recv() (*GreetingRequest, error) {
+	m := new(GreetingRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreetingService_ServiceDesc is the grpc.ServiceDesc for GreetingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -238,6 +302,12 @@ var GreetingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "LongGreeting",
 			Handler:       _GreetingService_LongGreeting_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "GreetingEveryone",
+			Handler:       _GreetingService_GreetingEveryone_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},
