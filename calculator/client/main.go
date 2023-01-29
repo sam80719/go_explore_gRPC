@@ -25,5 +25,8 @@ func main() {
 	//doSum(c)
 
 	// server stream
-	doPrimes(c)
+	//doPrimes(c)
+
+	// client stream
+	doAvg(c)
 }
