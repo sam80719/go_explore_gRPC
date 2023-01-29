@@ -20,5 +20,10 @@ func main() {
 	defer coon.Close()
 
 	c := pb.NewCalculatorServiceClient(coon)
-	doSum(c)
+
+	// unary
+	//doSum(c)
+
+	// server stream
+	doPrimes(c)
 }
