@@ -12,5 +12,9 @@ message GreetingResponse {
 }
 
 service GreetingService {
+  // unary
   rpc Greeting (GreetingRequest) returns (GreetingResponse);
+
+  // server stream
+  rpc GreetingManyTime (GreetingRequest) returns (stream GreetingResponse);
 }
