@@ -28,5 +28,8 @@ func main() {
 	//doPrimes(c)
 
 	// client stream
-	doAvg(c)
+	//doAvg(c)
+
+	// Bi-directional Streaming
+	doMax(c)
 }
