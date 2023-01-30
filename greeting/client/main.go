@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"time"
 )
 
 var address string = "localhost:50052"
@@ -23,5 +24,6 @@ func main() {
 	//doGreeting(c)
 	//doGreetingManyTime(c)
 	//doLongGreeting(c)
-	doGreetingEveryone(c)
+	//doGreetingEveryone(c)
+	doGreetingWithDeadline(c, 2*time.Second)
 }
