@@ -31,5 +31,8 @@ func main() {
 	//doAvg(c)
 
 	// Bi-directional Streaming
-	doMax(c)
+	//doMax(c)
+
+	// unary handle error
+	doSqrt(c, -2)
 }
