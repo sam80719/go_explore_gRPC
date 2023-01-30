@@ -7,3 +7,4 @@
 
 # gRPC advanced features
 1. handle error and deadline: doGreetingWithDeadline
+2. handle ssl security see tag (v1.5.3)[https://github.com/sam80719/go_explore_gRPC/releases/tag/v1.5.3]
