@@ -3,6 +3,7 @@ module github.com/sam80719/go_explore_gRPC
 go 1.19
 
 require (
+	go.mongodb.org/mongo-driver v1.11.1
 	google.golang.org/grpc v1.52.3
 	google.golang.org/protobuf v1.28.1
 )
