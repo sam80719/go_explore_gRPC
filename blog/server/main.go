@@ -13,10 +13,6 @@ import (
 var collection *mongo.Collection
 var address string = "0.0.0.0:50052"
 
-type Service struct {
-	pb.BlogServiceServer
-}
-
 func main() {
 	// set up mongo url
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:root@localhost:27017/"))

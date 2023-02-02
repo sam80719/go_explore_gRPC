@@ -20,5 +20,7 @@ Realize the Function
 - createBlog
 - readBlog
 - updateBlog
+- listBlog
+- deleteBlog
 
 
