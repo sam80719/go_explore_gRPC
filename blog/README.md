@@ -19,5 +19,6 @@ $ ./bin/blog/client
 Realize the Function
 - createBlog
 - readBlog
+- updateBlog
 
 

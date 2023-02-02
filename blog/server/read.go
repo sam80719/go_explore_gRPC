@@ -4,8 +4,6 @@ import (
 	"context"
 	pb "github.com/sam80719/go_explore_gRPC/blog/proto"
 	"go.mongodb.org/mongo-driver/bson"
-
-	//"go.mongodb.org/mongo-driver/bson" // note: need use: "go.mongodb.org/mongo-driver/bson/primitive" or you use this line≤you will not find _id
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

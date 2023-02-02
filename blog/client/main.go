@@ -25,6 +25,6 @@ func main() {
 	id := createBlog(c)
 
 	readBlog(c, id) // valid
-	readBlog(c, "notExistId")
 
+	updateBlog(c, id)
 }
