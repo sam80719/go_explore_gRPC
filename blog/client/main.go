@@ -27,4 +27,6 @@ func main() {
 	readBlog(c, id) // valid
 
 	updateBlog(c, id)
+
+	listBlog(c)
 }
