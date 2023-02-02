@@ -12,6 +12,12 @@
 ## blog start
 ```shell
 $ make blog
-$ 
+$ ./bin/blog/server
+$ ./bin/blog/client
 ```
+
+Realize the Function
+- createBlog
+- readBlog
+
 

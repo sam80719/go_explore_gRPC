@@ -22,6 +22,9 @@ func main() {
 	c := pb.NewBlogServiceClient(coon)
 
 	// unary
-	createBlog(c)
+	id := createBlog(c)
+
+	readBlog(c, id) // valid
+	readBlog(c, "notExistId")
 
 }
