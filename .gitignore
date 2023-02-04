@@ -3,7 +3,8 @@
 .env
 bin/*
 
-
+## Protobuf
+*.pb.go
 
 ## SSL
 *.crt

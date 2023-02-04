@@ -20,7 +20,7 @@ func (s *Service) DeleteBlog(ctx context.Context, in *pb.BlogId) (*emptypb.Empty
 	if err != nil {
 		return nil, status.Errorf(
 			codes.InvalidArgument,
-			fmt.Sprintf("can bot parse id: %V", in.Id),
+			fmt.Sprintf("can bot parse id: %v", in.Id),
 		)
 	}
 
